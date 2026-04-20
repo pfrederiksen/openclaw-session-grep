@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "openclaw-session-grep"
-version = "0.1.0"
+version = "0.1.1"
 description = "Fast local search for OpenClaw session transcript JSONL files."
 readme = "README.md"
 requires-python = ">=3.9"

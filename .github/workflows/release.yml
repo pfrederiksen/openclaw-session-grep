@@ -86,8 +86,8 @@ jobs:
               libexec.install "src/openclaw_session_grep"
               (bin/"openclaw-session-grep").write <<~SH
                 #!/bin/bash
-                export PYTHONPATH="#{libexec}:$PYTHONPATH"
-                exec "#{Formula["python@3.12"].opt_bin}/python3.12" -m openclaw_session_grep "$@"
+                export PYTHONPATH="#{libexec}:\${PYTHONPATH:-}"
+                exec "#{Formula["python@3.12"].opt_bin}/python3.12" -m openclaw_session_grep "\$@"
               SH
             end
 
