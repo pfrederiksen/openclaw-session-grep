@@ -112,7 +112,7 @@ Sample fixtures live in `tests/fixtures`.
 
 Tagged releases use GitHub Actions:
 
-- `v*` tags build and publish distributions to PyPI using PyPI trusted publishing.
+- `v*` tags build and publish distributions to PyPI using the `PYPI_API_TOKEN` repository secret.
 - The Homebrew workflow updates `pfrederiksen/homebrew-tap` with a formula that installs from the PyPI source distribution.
 
-Do not commit PyPI tokens. Configure PyPI trusted publishing for this repository, or store credentials as GitHub Actions secrets if you choose a different release strategy.
+Do not commit PyPI tokens. Store PyPI credentials as GitHub Actions secrets, or adapt the workflow to PyPI trusted publishing after configuring the publisher on PyPI.

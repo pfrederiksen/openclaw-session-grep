@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- Correct release documentation to match token-based PyPI publishing.
+
 ## 0.1.1
 
 - Fix Homebrew formula generation in the release workflow.
