@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "openclaw-session-grep"
+version = "0.1.0"
+description = "Fast local search for OpenClaw session transcript JSONL files."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "OpenClaw contributors" }]
+keywords = ["openclaw", "transcripts", "jsonl", "search", "cli"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/pfrederiksen/openclaw-session-grep"
+Issues = "https://github.com/pfrederiksen/openclaw-session-grep/issues"
+
+[project.scripts]
+openclaw-session-grep = "openclaw_session_grep.cli:main"
+
+[project.optional-dependencies]
+dev = ["build>=1.2"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/openclaw_session_grep"]

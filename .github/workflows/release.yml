@@ -1,0 +1,107 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build tooling
+        run: python -m pip install build
+      - name: Build distributions
+        run: python -m build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/*
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+
+  pypi:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/openclaw-session-grep
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  homebrew:
+    needs: pypi
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      TAP_REPOSITORY: pfrederiksen/homebrew-tap
+      PACKAGE_NAME: openclaw-session-grep
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TAP_REPOSITORY }}
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: tap
+      - name: Update formula
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
+          SDIST="dist/openclaw_session_grep-${VERSION}.tar.gz"
+          SHA256="$(sha256sum "$SDIST" | awk '{print $1}')"
+          mkdir -p tap/Formula
+          cat > tap/Formula/openclaw-session-grep.rb <<RUBY
+          class OpenclawSessionGrep < Formula
+            desc "Fast local search for OpenClaw session transcript JSONL files"
+            homepage "https://github.com/pfrederiksen/openclaw-session-grep"
+            url "https://files.pythonhosted.org/packages/source/o/openclaw-session-grep/openclaw_session_grep-${VERSION}.tar.gz"
+            sha256 "${SHA256}"
+            license "MIT"
+
+            depends_on "python@3.12"
+
+            def install
+              libexec.install "src/openclaw_session_grep"
+              (bin/"openclaw-session-grep").write <<~SH
+                #!/bin/bash
+                export PYTHONPATH="#{libexec}:$PYTHONPATH"
+                exec "#{Formula["python@3.12"].opt_bin}/python3.12" -m openclaw_session_grep "$@"
+              SH
+            end
+
+            test do
+              assert_match version.to_s, shell_output("#{bin}/openclaw-session-grep --version")
+            end
+          end
+          RUBY
+      - name: Commit formula
+        working-directory: tap
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula/openclaw-session-grep.rb
+          git commit -m "openclaw-session-grep ${GITHUB_REF_NAME}" || exit 0
+          git push

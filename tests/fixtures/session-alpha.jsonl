@@ -1,0 +1,5 @@
+{"timestamp":"2026-04-10T08:00:00Z","session_key":"alpha","agent":"main","channel":"telegram","type":"user","message":{"content":"Please prepare the morning briefing for me."}}
+{"timestamp":"2026-04-10T08:00:02Z","session_key":"alpha","agent":"main","channel":"telegram","type":"assistant","model":"gpt-5.4","message":{"content":"I will gather headlines and weather."},"usage":{"input_tokens":22,"output_tokens":9,"cost_usd":0.012}}
+{"timestamp":"2026-04-10T08:00:05Z","session_key":"alpha","agent":"main","channel":"telegram","type":"tool","tool_name":"message","input":"send briefing over telegram"}
+{"timestamp":"2026-04-10T08:00:09Z","session_key":"alpha","agent":"main","channel":"telegram","type":"assistant","model":"gpt-5.4","message":{"content":"The morning briefing has been sent."}}
+
